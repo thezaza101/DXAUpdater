@@ -43,10 +43,10 @@ namespace DXAUpdater
             }
             else
             {
-                string host = dbConn.Substring(dbConn.IndexOf(@"@"),dbConn.LastIndexOf(@":"));
-                string user = dbConn.Substring(dbConn.IndexOf(@"/"),dbConn.IndexOf(@":"));
-                string password = dbConn.Substring(dbConn.IndexOf(@"//"),dbConn.IndexOf(@"@"));
-                string database = dbConn.Substring(dbConn.LastIndexOf(@"/"),dbConn.Length);
+                string host = dbConn.Substring(dbConn.IndexOf(@"@")+1,dbConn.LastIndexOf(@":")-dbConn.IndexOf(@"@")-1);
+                string user = dbConn.Substring(dbConn.IndexOf(@"//")+2,dbConn.IndexOf(@":",dbConn.IndexOf(@"//"))-dbConn.IndexOf(@"//")-2);
+                string password = dbConn.Substring(dbConn.IndexOf(user.Substring(user.Length-3))+4,dbConn.IndexOf(@"@")-dbConn.IndexOf(user.Substring(user.Length-3))-4);
+                string database = dbConn.Substring(dbConn.LastIndexOf(@"/")+1,dbConn.Length-dbConn.LastIndexOf(@"/")-1);
                 string databaseConnectionString = "Host="+host+";Database="+database+";Username="+user+";Password="+password+";";
                 System.Console.WriteLine(databaseConnectionString);
                 services.AddDbContext<UpdatedDataContext>(options =>

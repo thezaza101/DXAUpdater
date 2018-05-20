@@ -30,6 +30,7 @@ namespace DXAUpdater
             try
             {
                 dbConn = Environment.GetEnvironmentVariable("DATABASE_URL").Trim();
+                System.Console.WriteLine(dbConn);
             }
             catch
             {

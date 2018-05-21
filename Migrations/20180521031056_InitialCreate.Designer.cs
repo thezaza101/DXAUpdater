@@ -10,9 +10,10 @@ using System;
 namespace DXAUpdater.Migrations
 {
     [DbContext(typeof(UpdatedDataContext))]
-    partial class UpdatedDataContextModelSnapshot : ModelSnapshot
+    [Migration("20180521031056_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

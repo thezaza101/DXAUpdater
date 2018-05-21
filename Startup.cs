@@ -28,7 +28,6 @@ namespace DXAUpdater
         {
             string dbConn = "";
             
-            
             try
             {
                 dbConn = Environment.GetEnvironmentVariable("AzureDB").Trim();

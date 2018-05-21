@@ -29,7 +29,7 @@ namespace DXAUpdater
             string dbConn = "";
             try
             {
-                dbConn = Environment.GetEnvironmentVariable("DATABASE_URL").Trim();
+                dbConn = Environment.GetEnvironmentVariable("AzureDB").Trim();
                 System.Console.WriteLine(dbConn);
             }
             catch
@@ -43,6 +43,7 @@ namespace DXAUpdater
             }
             else
             {
+                /*
                 string host = dbConn.Substring(dbConn.IndexOf(@"@")+1,dbConn.LastIndexOf(@":")-dbConn.IndexOf(@"@")-1);
                 string user = dbConn.Substring(dbConn.IndexOf(@"//")+2,dbConn.IndexOf(@":",dbConn.IndexOf(@"//"))-dbConn.IndexOf(@"//")-2);
                 string password = dbConn.Substring(dbConn.IndexOf(user.Substring(user.Length-3))+4,dbConn.IndexOf(@"@")-dbConn.IndexOf(user.Substring(user.Length-3))-4);
@@ -51,6 +52,9 @@ namespace DXAUpdater
                 System.Console.WriteLine(databaseConnectionString);
                 services.AddDbContext<UpdatedDataContext>(options =>
                 options.UseNpgsql(databaseConnectionString));
+                 */
+                 services.AddDbContext<UpdatedDataContext>(options =>
+                    options.UseSqlite(dbConn));
             }
                 
             services.AddMvc();

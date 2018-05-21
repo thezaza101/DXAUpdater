@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
-using System.Collections.Generic;
 
 namespace DXAUpdater.Migrations
 {
@@ -17,7 +16,6 @@ namespace DXAUpdater.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "2.0.3-rtm-10026");
 
             modelBuilder.Entity("DXANET.DataElement", b =>
@@ -45,10 +43,6 @@ namespace DXAUpdater.Migrations
 
                     b.Property<string>("status");
 
-                    b.Property<List<string>>("usage");
-
-                    b.Property<List<string>>("values");
-
                     b.Property<string>("version");
 
                     b.HasKey("ID");
@@ -68,8 +62,6 @@ namespace DXAUpdater.Migrations
                     b.Property<string>("facetsID");
 
                     b.Property<string>("type");
-
-                    b.Property<List<string>>("values");
 
                     b.HasKey("ID");
 

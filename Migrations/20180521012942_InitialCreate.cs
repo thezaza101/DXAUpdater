@@ -41,8 +41,7 @@ namespace DXAUpdater.Migrations
                 {
                     ID = table.Column<string>(nullable: false),
                     facetsID = table.Column<string>(nullable: true),
-                    type = table.Column<string>(nullable: true),
-                    values = table.Column<List<string>>(nullable: true)
+                    type = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -70,8 +69,6 @@ namespace DXAUpdater.Migrations
                     name = table.Column<string>(nullable: true),
                     sourceURL = table.Column<string>(nullable: true),
                     status = table.Column<string>(nullable: true),
-                    usage = table.Column<List<string>>(nullable: true),
-                    values = table.Column<List<string>>(nullable: true),
                     version = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

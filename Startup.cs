@@ -27,6 +27,8 @@ namespace DXAUpdater
         public void ConfigureServices(IServiceCollection services)
         {
             string dbConn = "";
+            
+            
             try
             {
                 dbConn = Environment.GetEnvironmentVariable("AzureDB").Trim();
@@ -34,7 +36,7 @@ namespace DXAUpdater
             }
             catch
             {
-                System.Console.WriteLine("Error getting DATABASE_URL");
+                System.Console.WriteLine("Error getting AzureDB");
             }
             if (string.IsNullOrEmpty(dbConn))
             {
@@ -52,11 +54,12 @@ namespace DXAUpdater
                 System.Console.WriteLine(databaseConnectionString);
                 services.AddDbContext<UpdatedDataContext>(options =>
                 options.UseNpgsql(databaseConnectionString));
-                 */
+                  */
+                 
                  services.AddDbContext<UpdatedDataContext>(options =>
-                    options.UseSqlite(dbConn));
+                    options.UseSqlServer(dbConn));
             }
-                
+               
             services.AddMvc();
         }
 

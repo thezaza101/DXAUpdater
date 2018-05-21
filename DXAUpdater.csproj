@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.0.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
     <Reference Include="DXANET.dll">
       <HintPath>DXANET.dll</HintPath>
       <SpecificVersion>False</SpecificVersion> 

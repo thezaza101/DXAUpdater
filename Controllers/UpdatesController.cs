@@ -105,7 +105,7 @@ namespace DXAUpdater.Controllers
             {
                 return null;
             }            
-            var updateddata = _context.UpdatedData.Include(d => d.Payload).SingleOrDefault(u => u.DataID.Equals(id));
+            var updateddata = _context.UpdatedData.SingleOrDefault(u => u.DataID.Equals(id));
             if (updateddata==null)
             {
                 return null;

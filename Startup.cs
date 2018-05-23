@@ -27,6 +27,7 @@ namespace DXAUpdater
         public void ConfigureServices(IServiceCollection services)
         {
             string dbConn = "";
+            dbConn = "Server=tcp:dxaupdater.database.windows.net,1433;Initial Catalog=dxa-updater;Persist Security Info=False;User ID=testdbxx;Password=$testxx123Xdb;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             
             try
             {

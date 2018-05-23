@@ -22,9 +22,9 @@ namespace DXAUpdater.Controllers
 
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            List<DXANET.DataElement> elements = new List<DXANET.DataElement>();
+            //Temp
             DXANET.DataElement xx1 = new DXANET.DataElement(){
                 name = "Higher Education Provider code",
                 domain = "Education",
@@ -84,9 +84,11 @@ namespace DXAUpdater.Controllers
                 values = new List<string>{},
                 sourceURL = "http://heimshelp.education.gov.au/sites/heimshelp/2018_data_requirements/2018dataelements/pages/312"};
 
-            UpdatedData d1 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for blah reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx1.identifier} ,Payload = JsonConvert.SerializeObject(xx1), PayloadType = "DATA"};
-            UpdatedData d2 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for some other reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx2.identifier, xx3.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx2, xx3}), PayloadType = "DATA"};
-            UpdatedData d3 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "best update in the world", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx3.identifier, xx4.identifier, xx5.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx3, xx4, xx5}), PayloadType = "DATA"};
+            UpdatedData d1 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for blah reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx1.identifier} ,Payload = JsonConvert.SerializeObject(xx1), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString()};
+            System.Threading.Thread.Sleep(100);
+            UpdatedData d2 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for some other reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx2.identifier, xx3.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx2, xx3}), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString()};
+            System.Threading.Thread.Sleep(100);
+            UpdatedData d3 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "best update in the world", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx3.identifier, xx4.identifier, xx5.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx3, xx4, xx5}), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString()};
             d1.NextDataID = d2.DataID;
             d2.NextDataID = d3.DataID;
 
@@ -94,42 +96,75 @@ namespace DXAUpdater.Controllers
             _context.Add(d2);
             _context.Add(d3);
             _context.SaveChanges();
-            return new string[] { d1.DataID, d2.DataID, d3.DataID };
+            return StatusCode(201, new string[] { d1.DataID, d2.DataID, d3.DataID });
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public UpdatedData Get(string id)
+        public IActionResult Get(string id)
         {            
             if (id == null)
             {
-                return null;
+                return StatusCode(400, "Provide ID for data");
             }            
             var updateddata = _context.UpdatedData.SingleOrDefault(u => u.DataID.Equals(id));
             if (updateddata==null)
             {
-                return null;
+                return StatusCode(400, "Data ID not found in database");
             }
                       
-            return updateddata;
+            return StatusCode(200, updateddata);
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Post([FromBody]dynamic value)
         {
+            string s = value.ToString();
+            UpdatedData d = JsonConvert.DeserializeObject<UpdatedData>(s);
+            d.DataID = Guid.NewGuid().ToString();
+            d.UpdateDateTimeTicks = DateTime.Now.Ticks.ToString();
+            try
+            {
+                UpdatedData lastUpdatedDataInDomain = _context.UpdatedData.Where(u => u.UpdatedDomain.Equals(d.UpdatedDomain)).OrderByDescending(t => t.UpdateDateTimeTicks).FirstOrDefault();
+                lastUpdatedDataInDomain.NextDataID = d.DataID;
+                _context.Update(lastUpdatedDataInDomain);
+            }
+            catch(System.NullReferenceException)
+            {
+                return StatusCode(401,"Domain does not exist");
+
+            }
+            _context.Add(d);
+            _context.SaveChanges();
+            return StatusCode(201,d.DataID);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put(int id, [FromBody]string value)
         {
+            return StatusCode(400, "Request type not supported");
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(string id)
         {
+            if (id == null)
+            {
+                return StatusCode(400, "Provide ID for data");
+            }            
+            var updateddata = _context.UpdatedData.SingleOrDefault(u => u.DataID.Equals(id));
+            if (updateddata==null)
+            {
+                return StatusCode(400, "Data ID not found");
+            }else{
+                _context.UpdatedData.Remove(updateddata);
+                _context.SaveChanges();
+                return StatusCode(200);
+            }
+
         }
     }
 }

@@ -22,11 +22,16 @@ namespace DXAUpdater.Models
         [JsonProperty("UpdatedDomain")]
         public string UpdatedDomain {get;set;}
 
-        [JsonProperty("UpdatedIdentifiers")]
+        [JsonProperty("UpdateDateTimeTicks")]
+        public string UpdateDateTimeTicks {get; set;} 
+
+        [JsonProperty("UpdatedIdentifiers", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public List<string> UpdatedIdentifiers { 
+            
             get{
                 try{
+                    if (string.IsNullOrWhiteSpace(iUpdatedIdentifiers)){iUpdatedIdentifiers="";}
                     return iUpdatedIdentifiers.Split(@"###").ToList();
                 }catch{
                     return new List<string>();
@@ -35,12 +40,14 @@ namespace DXAUpdater.Models
             set{
                 string s = "";
                 foreach (string x in value)
-                {
-                    s = s + x + "###";
-                }
+                {s = s + x + "###";}
                 iUpdatedIdentifiers = s;
             }
+            
          }
+
+        [JsonProperty("Active")]
+        public string Active {get; set;}
         
         [JsonProperty("PayloadType")]
         public string PayloadType {get; set;}
@@ -48,7 +55,10 @@ namespace DXAUpdater.Models
         [JsonProperty("Payload")]
         public string Payload {get; set;}
 
-        private string iUpdatedIdentifiers {get;set;}
-        
+        [JsonIgnore]
+        public string iUpdatedIdentifiers {get;set;}     
+
+          
     }
+    
 }

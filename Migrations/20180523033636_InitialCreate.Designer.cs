@@ -10,7 +10,7 @@ using System;
 namespace DXAUpdater.Migrations
 {
     [DbContext(typeof(UpdatedDataContext))]
-    [Migration("20180521031056_InitialCreate")]
+    [Migration("20180523033636_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,15 +25,21 @@ namespace DXAUpdater.Migrations
                     b.Property<string>("DataID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Active");
+
                     b.Property<string>("NextDataID");
 
                     b.Property<string>("Payload");
 
                     b.Property<string>("PayloadType");
 
+                    b.Property<string>("UpdateDateTimeTicks");
+
                     b.Property<string>("UpdateDescription");
 
                     b.Property<string>("UpdatedDomain");
+
+                    b.Property<string>("iUpdatedIdentifiers");
 
                     b.HasKey("DataID");
 

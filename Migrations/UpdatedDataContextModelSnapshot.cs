@@ -24,15 +24,21 @@ namespace DXAUpdater.Migrations
                     b.Property<string>("DataID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Active");
+
                     b.Property<string>("NextDataID");
 
                     b.Property<string>("Payload");
 
                     b.Property<string>("PayloadType");
 
+                    b.Property<string>("UpdateDateTimeTicks");
+
                     b.Property<string>("UpdateDescription");
 
                     b.Property<string>("UpdatedDomain");
+
+                    b.Property<string>("iUpdatedIdentifiers");
 
                     b.HasKey("DataID");
 

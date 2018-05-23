@@ -13,11 +13,14 @@ namespace DXAUpdater.Migrations
                 columns: table => new
                 {
                     DataID = table.Column<string>(nullable: false),
+                    Active = table.Column<string>(nullable: true),
                     NextDataID = table.Column<string>(nullable: true),
                     Payload = table.Column<string>(nullable: true),
                     PayloadType = table.Column<string>(nullable: true),
+                    UpdateDateTimeTicks = table.Column<string>(nullable: true),
                     UpdateDescription = table.Column<string>(nullable: true),
-                    UpdatedDomain = table.Column<string>(nullable: true)
+                    UpdatedDomain = table.Column<string>(nullable: true),
+                    iUpdatedIdentifiers = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

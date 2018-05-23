@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
 namespace DXAUpdater.Migrations
 {
     [DbContext(typeof(UpdatedDataContext))]
-    [Migration("20180523033636_InitialCreate")]
+    [Migration("20180523035636_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +26,7 @@ namespace DXAUpdater.Migrations
                     b.Property<string>("DataID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Active");
+                    b.Property<bool>("Active");
 
                     b.Property<string>("NextDataID");
 

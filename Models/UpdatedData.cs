@@ -47,7 +47,7 @@ namespace DXAUpdater.Models
          }
 
         [JsonProperty("Active")]
-        public string Active {get; set;}
+        public bool Active {get; set;}
         
         [JsonProperty("PayloadType")]
         public string PayloadType {get; set;}

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
@@ -24,7 +25,7 @@ namespace DXAUpdater.Migrations
                     b.Property<string>("DataID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Active");
+                    b.Property<bool>("Active");
 
                     b.Property<string>("NextDataID");
 

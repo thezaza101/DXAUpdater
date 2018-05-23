@@ -84,11 +84,11 @@ namespace DXAUpdater.Controllers
                 values = new List<string>{},
                 sourceURL = "http://heimshelp.education.gov.au/sites/heimshelp/2018_data_requirements/2018dataelements/pages/312"};
 
-            UpdatedData d1 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for blah reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx1.identifier} ,Payload = JsonConvert.SerializeObject(xx1), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString()};
+            UpdatedData d1 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for blah reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx1.identifier} , Payload = JsonConvert.SerializeObject(xx1), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString(), Active = true};
             System.Threading.Thread.Sleep(100);
-            UpdatedData d2 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for some other reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx2.identifier, xx3.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx2, xx3}), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString()};
+            UpdatedData d2 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "updated for some other reason", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx2.identifier, xx3.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx2, xx3}), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString(), Active = true};
             System.Threading.Thread.Sleep(100);
-            UpdatedData d3 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "best update in the world", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx3.identifier, xx4.identifier, xx5.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx3, xx4, xx5}), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString()};
+            UpdatedData d3 = new UpdatedData(){ DataID = Guid.NewGuid().ToString(), UpdateDescription = "best update in the world", UpdatedDomain="edu", UpdatedIdentifiers = new List<string>{xx3.identifier, xx4.identifier, xx5.identifier} ,Payload = JsonConvert.SerializeObject(new List<DXANET.DataElement>{xx3, xx4, xx5}), PayloadType = "DATA", UpdateDateTimeTicks = DateTime.Now.Ticks.ToString(), Active = true};
             d1.NextDataID = d2.DataID;
             d2.NextDataID = d3.DataID;
 
@@ -111,6 +111,10 @@ namespace DXAUpdater.Controllers
             if (updateddata==null)
             {
                 return StatusCode(400, "Data ID not found in database");
+            }
+            if (!updateddata.Active)
+            {
+                return StatusCode(400, "Data ID not found in database");                
             }
                       
             return StatusCode(200, updateddata);
@@ -160,7 +164,8 @@ namespace DXAUpdater.Controllers
             {
                 return StatusCode(400, "Data ID not found");
             }else{
-                _context.UpdatedData.Remove(updateddata);
+                updateddata.Active = false;
+                _context.Update(updateddata);
                 _context.SaveChanges();
                 return StatusCode(200);
             }

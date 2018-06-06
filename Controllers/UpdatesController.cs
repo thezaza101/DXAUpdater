@@ -5,7 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DXAUpdater.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+
 
 namespace DXAUpdater.Controllers
 {
@@ -22,10 +27,11 @@ namespace DXAUpdater.Controllers
 
         // GET api/values
         [HttpGet]
+        //[Authorize]
         public IActionResult Get()
         {
             //Temp
-            DXANET.DataElement xx1 = new DXANET.DataElement(){
+            /*DXANET.DataElement xx1 = new DXANET.DataElement(){
                 name = "Higher Education Provider code",
                 domain = "Education",
                 status = "Standard",
@@ -97,6 +103,8 @@ namespace DXAUpdater.Controllers
             _context.Add(d3);
             _context.SaveChanges();
             return StatusCode(201, new string[] { d1.DataID, d2.DataID, d3.DataID });
+            */
+            return StatusCode(200, User.Identity.Name); 
         }
 
         // GET api/values/5
@@ -114,7 +122,7 @@ namespace DXAUpdater.Controllers
             }
             if (!updateddata.Active)
             {
-                return StatusCode(400, "Data ID not found in database");                
+                return StatusCode(200, UpdatedData.GetPointers(updateddata));                
             }
                       
             return StatusCode(200, updateddata);
@@ -127,6 +135,7 @@ namespace DXAUpdater.Controllers
             string s = value.ToString();
             UpdatedData d = JsonConvert.DeserializeObject<UpdatedData>(s);
             d.DataID = Guid.NewGuid().ToString();
+            d.Active = true;
             d.UpdateDateTimeTicks = DateTime.Now.Ticks.ToString();
             try
             {
@@ -141,14 +150,55 @@ namespace DXAUpdater.Controllers
             }
             _context.Add(d);
             _context.SaveChanges();
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(@"http://localhost:5000/api/updates");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+            HttpContent content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(d));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage rm = client.PostAsync("",content).Result;
+
             return StatusCode(201,d.DataID);
+
+            
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]string value)
+        public IActionResult Put(string id, [FromBody]string value)
         {
-            return StatusCode(400, "Request type not supported");
+
+            if (id == null)
+            {
+                return StatusCode(400, "Provide ID for data");
+            }            
+            var updateddata = _context.UpdatedData.SingleOrDefault(u => u.DataID.Equals(id));
+            if (updateddata==null)
+            {
+                return StatusCode(400, "Data ID not found in database");
+            }
+            if (!updateddata.Active)
+            {
+                return StatusCode(200, UpdatedData.GetPointers(updateddata));                
+            }
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(@"http://localhost:5000/api/updates");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+            HttpContent content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(updateddata));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage rm = client.PostAsync("",content).Result;
+
+            return StatusCode(400, rm.StatusCode.ToString() + rm.Content.ToString());
+            
+            //
+            //return StatusCode(400, "Request type not supported");
         }
 
         // DELETE api/values/5

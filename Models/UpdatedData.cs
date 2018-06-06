@@ -31,8 +31,8 @@ namespace DXAUpdater.Models
             
             get{
                 try{
-                    if (string.IsNullOrWhiteSpace(iUpdatedIdentifiers)){iUpdatedIdentifiers="";}
-                    return iUpdatedIdentifiers.Split(@"###").ToList();
+                    if (string.IsNullOrEmpty(iUpdatedIdentifiers)){iUpdatedIdentifiers="";}
+                    return iUpdatedIdentifiers.Split(@"###").Where(i => !string.IsNullOrWhiteSpace(i.Trim())).ToList();
                 }catch{
                     return new List<string>();
                 }
@@ -58,7 +58,11 @@ namespace DXAUpdater.Models
         [JsonIgnore]
         public string iUpdatedIdentifiers {get;set;}     
 
-          
+        public static UpdatedData GetPointers(UpdatedData inData)
+        {
+            return new UpdatedData(){DataID = inData.DataID, NextDataID = inData.NextDataID};
+        }
     }
+    
     
 }

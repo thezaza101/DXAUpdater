@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,14 @@ using Microsoft.Extensions.Options;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using DXAUpdater.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using DXAUpdater.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace DXAUpdater
 {
@@ -27,7 +36,8 @@ namespace DXAUpdater
         public void ConfigureServices(IServiceCollection services)
         {
             string dbConn = "";
-            
+            dbConn = "Server=tcp:dxaupdater.database.windows.net,1433;Initial Catalog=dxa-updater;Persist Security Info=False;User ID=testdbxx;Password=$testxx123Xdb;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
             try
             {
                 dbConn = Environment.GetEnvironmentVariable("AzureDB").Trim();
@@ -39,26 +49,49 @@ namespace DXAUpdater
             }
             if (string.IsNullOrEmpty(dbConn))
             {
-            services.AddDbContext<UpdatedDataContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                services.AddDbContext<UpdatedDataContext>(options =>
+                    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             }
             else
             {
-                /*
-                string host = dbConn.Substring(dbConn.IndexOf(@"@")+1,dbConn.LastIndexOf(@":")-dbConn.IndexOf(@"@")-1);
-                string user = dbConn.Substring(dbConn.IndexOf(@"//")+2,dbConn.IndexOf(@":",dbConn.IndexOf(@"//"))-dbConn.IndexOf(@"//")-2);
-                string password = dbConn.Substring(dbConn.IndexOf(user.Substring(user.Length-3))+4,dbConn.IndexOf(@"@")-dbConn.IndexOf(user.Substring(user.Length-3))-4);
-                string database = dbConn.Substring(dbConn.LastIndexOf(@"/")+1,dbConn.Length-dbConn.LastIndexOf(@"/")-1);
-                string databaseConnectionString = "Host="+host+";Database="+database+";Username="+user+";Password="+password+";";
-                System.Console.WriteLine(databaseConnectionString);
                 services.AddDbContext<UpdatedDataContext>(options =>
-                options.UseNpgsql(databaseConnectionString));
-                  */
-                 
-                 services.AddDbContext<UpdatedDataContext>(options =>
-                    options.UseSqlServer(dbConn));
+                   options.UseSqlServer(dbConn));
             }
-               
+            /* PLACEHOLDER
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "localhost",
+                    ValidAudience = "localhost",
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes("dd%88*377f6d&f£$$£$FdddFF33fssDG^!3"))
+                };
+            }); 
+            
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(  options =>  {  
+                    options.SecurityTokenValidators.Clear();
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        TokenDecryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecurityTokenKey"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecurityKey"])),
+                        //ValidAudience = "localhost",
+                        //ValidIssuer = "localhost",
+                        ValidateLifetime = false,
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+            });
+            */
+            
+
             services.AddMvc();
         }
 
@@ -70,7 +103,12 @@ namespace DXAUpdater
                 app.UseDeveloperExceptionPage();
             }
 
+            //app.UseAuthentication();
             app.UseMvc();
+
+
         }
+
     }
+
 }
